@@ -1,0 +1,1 @@
+/home/hv/ws_moveit/devel/.private/franka_gripper/share/franka_gripper/msg/GraspGoal.msg

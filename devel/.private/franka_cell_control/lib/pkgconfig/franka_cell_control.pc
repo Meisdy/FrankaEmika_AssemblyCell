@@ -1,0 +1,8 @@
+prefix=/home/hv/ws_moveit/devel/.private/franka_cell_control
+
+Name: franka_cell_control
+Description: Description of franka_cell_control
+Version: 0.0.0
+Cflags: 
+Libs: -L${prefix}/lib 
+Requires: 

@@ -1,0 +1,1 @@
+/home/hv/ws_moveit/devel/.private/franka_cell_control/share/franka_cell_control/cmake/franka_cell_controlConfig.cmake
