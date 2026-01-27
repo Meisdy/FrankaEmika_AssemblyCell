@@ -7,6 +7,20 @@ Terminal B (only needed when teaching new points)
 (bridge joint states)
 rosrun topic_tools relay /franka_state_controller/joint_states /joint_states
 
+
+
+-------------------------------------------------------------------------------------------------------------------------------------
+additional Command which were used in the process...
+
+
+
+
+
+
+
+
+
+
 rostopic echo /joint_states -n1 #sollte die aktuellen joints und greiferpos anzeigen
 
 
@@ -28,34 +42,7 @@ rosservice call /controller_manager/switch_controller \
 "{start_controllers: ['position_joint_trajectory_controller' ,'franka_state_controller'], stop_controllers: [], strictness: 2}"
 
 
-!!!!!!!!!!!!!! Alt !!!!!!!!!!!!!!!!
-Terminal A
-source ~/ws_moveit/devel/setup.bash
-roslaunch franka_control franka_control.launch robot_ip:=192.168.1.100
-
-
-Terminal B
-source ~/ws_moveit/devel/setup.bash
-roslaunch panda_moveit_config move_group.launch
-roslaunch panda_moveit_config  franka_control.launch robot_ip:=192.168.1.100
-
-
-Terminal C
-source ~/ws_moveit/devel/setup.bash
-rviz
-
-Terminal D (Make sure that the trajectory controller and franka state controller are running at the same time!)
-rosservice call /controller_manager/load_controller "position_joint_trajectory_controller"
-rosservice call /controller_manager/switch_controller \
-"{start_controllers: ['position_joint_trajectory_controller' ], stop_controllers: [], strictness: 2}"
-
-rosservice call /controller_manager/list_controllers
-
-
-
-(bridge joint states)
-rosrun topic_tools relay /franka_state_controller/joint_states /joint_states
-
+Variables if main1_withrobotClass.pz is run in simulation mode
 {
     "mwFrStart": true,
     "mwFrRefill": false,
