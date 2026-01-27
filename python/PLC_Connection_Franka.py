@@ -8,14 +8,19 @@ import pyads
 
 SIM_FILE = "plc_data.json"
 
+
 class PLC_Connection_Franka:
     def __init__(self, plc_ip, ams_net_id, ams_port, simulate=False, sim_file=SIM_FILE):
         self.simulate = simulate
         self.sim_file = sim_file
 
+        print("Initalize PLC_Connection")
+
         if not simulate:
             try:
+                print("Try to connect")
                 self.plc = pyads.Connection(ams_net_id, ams_port, plc_ip)
+                print("Try to connect2")
                 self.plc.open()
                 print("✅ Connected to PLC")
             except Exception as e:
@@ -46,7 +51,6 @@ class PLC_Connection_Franka:
             return [self._get_symbol(name).read() for name in var_names]
 
     def set(self, **var_values):    #set(var_name=True/12.4/"What ever")
-        print("Set function")
         if self.simulate:
             data = self._read_sim_file()
             data.update(var_values)
@@ -78,12 +82,25 @@ class PLC_Connection_Franka:
 # MAIN
 # ==========================================================
 if __name__ == "__main__":
+    print("Function started")
     plc = PLC_Connection_Franka(
-        ams_net_id="192.168.10.1.1.1",
-        plc_ip="192.168.10.1",
+        ams_net_id="5.89.239.104.1.1" ,
+        plc_ip="169.254.215.116",
         ams_port=851
     )
+    plc = PLC_Connection_Franka.PLC_Connection_Franka("", "", 0, simulate=True)    #simulation 
+    plc.set(mwFrStart=False)
+    # go through the program
+    # set Franka status
+    plc.set(mwFrStatus="Get Container")
+    plc.set(mwFrStatus="Assemble ...")
+    plc.set(mwFrStatus="Place on AGV")
 
+
+    plc.set(mwAssemblyColor="blue")
+    plc.set(mwFrFinished=True)
+    plc.set(mwFrRefill=True)
+    plc.set(mwFrVisiCode=[111, 242, 313, 214, 145, 126])
     while True:
         mwFrStart, mwFrRefill, mwFrFinished, mwFrStatus, mwFrVisiCode, mwAssemblyColor = plc.get("mwFrStart", "mwFrRefill", "mwFrFinished", "mwFrStatus", "mwFrVisiCode", "mwAssemblyColor")
         if not mwFrStart:

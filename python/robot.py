@@ -3,10 +3,11 @@
 import numpy as np
 from geometry_msgs.msg import Pose
 from moveit_commander.exception import MoveItCommanderException
+import json
 
 '''
 # --- Set up FRANKA ---
-FCI needs to be enabled, joints unlocked and enabeling Button not pressed (white mode)
+FCI needs to be enabled, joints unlocked and enabeling Button not pressed (blue mode)
 
 In your script initalize the Franka as follows
 Example for FRANKA EMIKA
@@ -20,7 +21,7 @@ robot = Robot("panda_arm", "panda_hand", moveit_commander)
 For trajectory planning, RViz needs to be running. Change the ip to your Franka controller.
 
 source ~/ws_moveit/devel/setup.bash
-roslaunch panda_moveit_config  franka_control.launch robot_ip:=192.168.1.100 load_gripper:=true
+roslaunch panda_moveit_config  franka_control.launch robot_ip:=192.168.1.100 load_gripper:=true use_rviz:=false
 
 
 '''
@@ -34,8 +35,11 @@ class Robot:
 
         self.arm.set_goal_orientation_tolerance(0.005)
         self.arm.set_goal_position_tolerance(0.005)
+        self.set_mode_ptp()
 
-        self.use_pilz()
+        self._positions = self.load_points()
+        print("Loaded positions:", list(self._positions.keys()))
+
 
     # --------------------------
     #       PLANNERS
@@ -53,26 +57,29 @@ class Robot:
         self.arm.set_max_velocity_scaling_factor(0.1)
         self.arm.set_max_acceleration_scaling_factor(0.1)
 
-    def use_pilz(self):
-        self.arm.set_planner_id("PTP")
-        self.arm.set_planning_pipeline_id("pilz_industrial_motion_planner")
 
     # --------------------------
     #     MOTION FUNCTIONS
     # --------------------------
 
     # Linear movement
-    def MoveL(self, name, positions, offset=None):
+    def MoveL(self, name, positions=None, offset=None):
+        if positions is None:
+            positions = self._positions
         self.set_mode_lin()
         self.go_to_point_pose_only(name, positions, offset)
 
     # Non-linear movement
-    def MoveJ(self, name, positions, offset=None):
+    def MoveJ(self, name, positions=None, offset=None):
+        if positions is None:
+            positions = self._positions
         self.set_mode_ptp()
         self.go_to_point_pose_only(name, positions, offset)
 
     # Joint movement
-    def MoveJ_J(self, name, positions):
+    def MoveJ_J(self, name, positions=None):
+        if positions is None:
+            positions = self._positions
         entry = positions.get(name)
         if entry is None:
             print(f"⚠ Position '{name}' not found.")
@@ -161,3 +168,36 @@ class Robot:
         if norm > 0:
             q = q / norm
             pose.orientation.x, pose.orientation.y, pose.orientation.z, pose.orientation.w = q
+
+
+    def load_points(self):
+        SAVE_FILE = "positions.jsonl"       # file in which the postions are saved
+        positions = {}
+        try:
+            with open(SAVE_FILE, "r") as f:
+                for line in f:
+                    if not line.strip():
+                        continue
+
+                    data = json.loads(line.strip())
+
+                    pose = Pose()
+                    pose.position.x = data["pos"][0]
+                    pose.position.y = data["pos"][1]
+                    pose.position.z = data["pos"][2]
+                    pose.orientation.x = data["quat"][0]
+                    pose.orientation.y = data["quat"][1]
+                    pose.orientation.z = data["quat"][2]
+                    pose.orientation.w = data["quat"][3]
+
+                    joints = data.get("joints", None)
+
+                    positions[data["name"]] = {
+                        "pose": pose,
+                        "joints": joints
+                    }
+
+        except FileNotFoundError:
+            print(f"⚠ File not found: {SAVE_FILE}")
+
+        return positions

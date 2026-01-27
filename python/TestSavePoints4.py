@@ -6,7 +6,7 @@ from moveit_commander import RobotCommander, PlanningSceneInterface, MoveGroupCo
 from geometry_msgs.msg import Pose, PoseStamped
 from sensor_msgs.msg import JointState
 
-SAVE_FILE = "punkte5.jsonl"
+SAVE_FILE = "positions.jsonl"
 
 # ======================================================================
 # Utils

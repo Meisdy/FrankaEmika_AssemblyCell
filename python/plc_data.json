@@ -1,18 +1,17 @@
 {
     "mwFrStart": true,
-    "mwFrStatus": 3,
-    "mwFrRefilled": true,
-    "mwFrFinished": false,
     "mwFrRefill": false,
-    "mwFrTaskCode": 1111,
+    "mwFrFinished": false,
+    "mwFrStatus": 3,
     "mwFrVisiCode": [
-        111,
-        242,
-        313,
-        214,
-        145,
-        126
+        221,
+        232,
+        553,
+        224,
+        235,
+        556
     ],
-    "mwAssemblyColor": "blue",
-    "mwFrEmergency": false
+    "mwAssemblyColor": "red",
+    "mwFrState": 3,
+    "mwFrRefilled": true
 }
