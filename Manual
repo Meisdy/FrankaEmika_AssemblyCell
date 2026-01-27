@@ -1,16 +1,19 @@
 Terminal A
 ---------------------------------------
 source ~/ws_moveit/devel/setup.bash
-roslaunch panda_moveit_config  franka_control.launch robot_ip:=192.168.1.100 load_gripper:=true
+roslaunch panda_moveit_config  franka_control.launch robot_ip:=192.168.1.100 load_gripper:=true use_rviz:=false
+
+
 
 Terminal B (only needed when teaching new points)
+--------------------------------------
 (bridge joint states)
 rosrun topic_tools relay /franka_state_controller/joint_states /joint_states
 
 
 
 -------------------------------------------------------------------------------------------------------------------------------------
-additional Command which were used in the process...
+additional Commands which were used in the process...
 
 
 
